@@ -1,0 +1,49 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/core-list/core-list.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+
+<polymer-element name="list-items" attributes="itemsList">
+    <template>
+        <div hidden?="{{itemsList.length == 0}}">
+            <core-list fit style="margin:15px" data="{{itemGroups}}" groups="{{timeOfDayGroups}}">
+                <template>
+                    <div divider class="divider">{{groupModel.timeOfDay}}</div>
+                    <paper-item>
+                        <div horizontal justified layout flex>
+                            <div>[photo]</div>
+                            <div style="margin-left:10px" flex>{{model.name}}</div>
+                            <div>action</div>
+                        </div>
+                    </paper-item>
+                </template>
+            </core-list>
+        </div>
+        <div hidden?="{{itemsList.length > 0}}">
+            The list is empty.
+        </div>
+    </template>
+    <script>
+        Polymer({
+            itemsListChanged: function() {
+                this.timeOfDayGroups = this.getTimeOfDayGroups(this.itemsList);
+                this.itemGroups = this.getItemGroups(this.itemsList);
+            },
+            getTimeOfDayGroups: function(a) {
+                if (a) {
+                    return a.map(function(i) {
+                        return {
+                            timeOfDay: i.timeOfDay.label
+                        };
+                    });
+                }
+            },
+            getItemGroups: function(a) {
+                if (a) {
+                    return a.map(function(i) {
+                        return i.items;
+                    });
+                }
+            }
+        });
+    </script>
+</polymer-element>

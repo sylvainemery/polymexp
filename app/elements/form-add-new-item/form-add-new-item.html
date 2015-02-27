@@ -1,0 +1,81 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/core-field/core-field.html">
+<link rel="import" href="/bower_components/core-icon/core-icon.html">
+<link rel="import" href="/bower_components/core-icons/notification-icons.html">
+<link rel="import" href="/bower_components/core-menu/core-menu.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-item/paper-item.html">
+<link rel="import" href="/bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="/bower_components/paper-dropdown/paper-dropdown.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/paper-dialog/paper-action-dialog.html">
+<link rel="import" href="/bower_components/d-calendar/d-calendar.html">
+
+<polymer-element name="form-add-new-item" attributes="timeList">
+    <template>
+        <style>
+            paper-button.colored {
+                color: #4285f4;
+            }
+            paper-button[raised].colored {
+                background: #4285f4;
+                color: #ffffff;
+            }
+        </style>
+        <div layout vertical fit>
+            <core-field>
+                <core-icon icon="label"></core-icon>
+                <paper-input label="Name" value="{{nameValue}}"></paper-input>
+            </core-field>
+            <core-field>
+                <core-icon icon="notification:event-note"></core-icon>
+                <paper-input disabled label="Date" value="{{dateValue}}"></paper-input>
+                <paper-icon-button on-click="{{toggleCal}}" icon="notification:event-note" style="color: #2196F3"></paper-icon-button>
+                <paper-action-dialog backdrop layered="false" id="cal" style="background-color:#999" transition="core-transition-center">
+                    <d-calendar selectedDate="{{selectedDate}}" on-d-calendar-date-selected="{{dateSelected}}"></d-calendar>
+                    <paper-button affirmative>Close</paper-button>
+                </paper-action-dialog>
+            </core-field>
+            <core-field>
+                <core-icon icon="alarm"></core-icon>
+                <paper-dropdown-menu label="Time of day">
+                    <paper-dropdown class="dropdown">
+                        <core-menu class="menu" valueattr="label" selected="{{timeValue}}">
+                            <template repeat="{{time in timeList}}">
+                                <paper-item label="{{time}}">{{time}}</paper-item>
+                            </template>
+                        </core-menu>
+                    </paper-dropdown>
+                </paper-dropdown-menu>
+            </core-field>
+            <core-field>
+                <paper-button raised class="{{ {colored: (nameValue != '' && timeValue)} | tokenList }}" disabled?="{{!(nameValue != '' && timeValue)}}" on-click="{{saveNew}}">Save</paper-button>
+            </core-field>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            saveNew: function() {
+                if (this.nameValue != "" && this.timeValue) {
+                    var d = new Date(this.dateValue);
+                    d.setHours(0, 0, 0, 0);
+                    this.fire('additem', {name: this.nameValue, date: d, timeOfDay: {value: Number(this.timeValue.replace(':', '')), label: this.timeValue}});
+                    this.timeValue = null;
+                    this.nameValue = '';
+                }
+            },
+            toggleCal: function(e) {
+                var d = e.target.nextElementSibling;
+                if (!d) {
+                  return;
+                }
+                d.toggle();
+
+            },
+            dateSelected: function(e) {
+                this.dateValue = PolymerExpressions.prototype.date(this.selectedDate, "yyyy-MM-dd");
+            }
+        });
+    </script>
+</polymer-element>

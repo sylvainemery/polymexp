@@ -1,0 +1,43 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="app-globals">
+    <script>
+        (function() {
+            // these variables are shared by all instances of app-globals
+            var timeList = ['08:00', '12:00', '16:00', '19:30'];
+            
+            var dateArray = [];
+            dateArray.length = 7;
+            var middleIndex = parseInt((dateArray.length - 1) / 2, 10);
+            var dateTmp;
+            var startDate = new Date();
+            startDate.setDate(startDate.getDate() - middleIndex);
+            startDate.setHours(0, 0, 0, 0);
+            for (var i = 0; i < dateArray.length; i++) {
+                dateTmp = new Date(startDate);
+                dateTmp.setDate(startDate.getDate() + i);
+                dateArray[i] = {
+                    dateValue: dateTmp,
+                    label: dateTmp.toDateString(),
+                    dayList: new Array()
+                };
+            }
+            //sample data
+            dateArray[middleIndex].dayList = [{
+                        timeOfDay: {value: 1200, label:"12:00"},
+                        items: [{name: "aaa"}, {name: "ccc"}]
+                    }, {
+                        timeOfDay: {value: 1600, label:"16:00"},
+                        items: [{name: "bbb"}]
+                    }];
+
+            Polymer({
+                ready: function() {
+                    // copy global values into instance properties
+                    this.timeList = timeList;
+                    this.dateArray = dateArray;
+                }
+            });
+        })();
+    </script>
+</polymer-element>
